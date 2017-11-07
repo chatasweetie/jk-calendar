@@ -31,12 +31,11 @@ Create Postgres Database
 
 
 ### About the Developers   
-Karalyn DeWalt
+Karalyn DeWalt    
 [Linkedin](https://www.linkedin.com/in/karalyndewalt/) 
 
 Jessica Dene Earley-Cha   
-[Short Bio](https://chatasweetie.com/about-me/)   
 [Linkedin](https://www.linkedin.com/in/jessicaearley)    
-[Chatasweetie's Blog](https://chatasweetie.com/)    
+[Blog](https://chatasweetie.com/)    
 
 
