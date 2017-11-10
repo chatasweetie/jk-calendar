@@ -2,8 +2,29 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from server import app
 
 db = SQLAlchemy()
+
+class Permission(db.Model):
+    """This is an individual permission level"""
+
+    __tablename__ = "permissions"
+
+    permission_id = db.Column(db.Integer,
+                              autoincrement=True,
+                              primary_key=True,
+                              )
+
+    permission_code = db.Column(db.String(20),
+                                nullable=False,
+                                unique=True,
+                                )
+
+    def __repr__(self):
+        """Provides useful represenation when printed"""
+
+        return """<Permission permission_code: {}>""".format(self.permission_code)
 
 
 class User(db.Model):
@@ -15,8 +36,9 @@ class User(db.Model):
                         autoincrement=True,
                         primary_key=True,
                         )
-    email = db.Column(db.String(200),
-                      nullable=True,
+    email = db.Column(db.String(254),
+                      nullable=False,
+                      unique=True,
                      )
 
     def __repr__(self):
@@ -35,7 +57,7 @@ class Calendar(db.Model):
                        primary_key=True,
                        )
     name = db.Column(db.String(100),
-                     nullable=True
+                     nullable=False
                     )
 
     def __repr__(self):
@@ -61,7 +83,8 @@ class Calendar_User(db.Model):
 
     user_id = db.Column(db.Integer,
                         db.ForeignKey("users.user_id"),
-                        nullable=False,)
+                        nullable=False,
+                        )
 
     permissions = db.Column(db.Integer,
                             db.ForeignKey("permissions.permission_id"),
@@ -82,26 +105,6 @@ class Calendar_User(db.Model):
         return """<Calendar_User cal_id: {} user_id: {}>""".format(self.cal_id,
                                                                    self, user_id
                                                                    )
-
-
-class Permission(db.Model):
-    """This is an individual permission level"""
-
-    __tablename__ = "permissions"
-
-    permission_id = db.Column(db.Integer,
-                              autoincrement=True,
-                              primary_key=True,
-                              )
-
-    permission_code = db.Column(db.String(20),
-                                 nullable=True,
-                                 )
-
-    def __repr__(self):
-        """Provides useful represenation when printed"""
-
-        return """<Permission permission_code: {}>""".format(self.permission_code)
 
 
 class Event(db.Model):
@@ -267,6 +270,7 @@ def connect_to_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     db.app = app
     db.init_app(app)
+    db.create_all()
 
 
 # if __name__ == "__main__":
