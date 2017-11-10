@@ -11,116 +11,165 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.String(200), nullable=True)
+    user_id = db.Column(db.Integer,
+                        autoincrement=True,
+                        primary_key=True,
+                        )
+    email = db.Column(db.String(200),
+                      nullable=True,
+                     )
 
     def __repr__(self):
         """Provides useful represenation when printed"""
 
-        return """<User user_name: {} >""".format(self.email)
+        return """<User user_name: {}>""".format(self.email)
 
 
-# class Calendar(db.Model):
-#     """This is the individual calendar"""
+class Calendar(db.Model):
+    """This is the individual calendar"""
 
-#     __tablename__ = "calendars"
+    __tablename__ = "calendars"
 
-#     calendar_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     name = db.Column(db.String(100), nullable=True)
-#     events = db.relationship("Event",
-#                              secondary="Calendar_Event",
-#                              backref="calendars")
-#     users = db.relationship("User",
-#                              secondary="User.user_id",
-#                              backref="calednars")
+    cal_id = db.Column(db.Integer,
+                       autoincrement=True,
+                       primary_key=True,
+                       )
+    name = db.Column(db.String(100),
+                     nullable=True
+                    )
 
-#     def __repr__(self):
-#         """Provides useful represenation when printed"""
+    def __repr__(self):
+        """Provides useful represenation when printed"""
 
-#         return """<Calendar name: {} >""".format(self.name)
-
-
-# class Calendar_User(db.Model):
-#     """This is the individual relationship between a User & Calendar"""
-
-#     __tablename__ = "calendar_users"
-
-#     cal_user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     calendar_id = db.Column(db.Integer,
-#                             db.ForeignKey("calendars.calendar_id"),
-#                             nullable=False)
-#     user_id = db.Column(db.Integer,
-#                             db.ForeignKey("users.user_id"),
-#                             nullable=False)
-#     cal_owner = db.Column(db.Integer,
-#                             db.ForeignKey("users.user_id"),
-#                             nullable=False)
-#     permissions = db.Column(db.Integer,
-#                             db.ForeignKey("permissions.permission_id"),
-#                             nullable=False)
-
-#     def __repr__(self):
-#         """Provides useful represenation when printed"""
-
-#         return """<Calendar_User calendar_id: {} user_id: {} >""".format(self.calendar_id, self, user_id)
+        return """<Calendar name: {}>""".format(self.name)
 
 
-# class Permission(db.Model):
-#     """This is an individual permission level"""
+class Calendar_User(db.Model):
+    """This is the individual relationship between a User & Calendar"""
 
-#     __tablename__ = "permissions"
+    __tablename__ = "calendar_users"
 
-#     permission_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     permission_level = db.Column(db.String(100), nullable=True)
+    cal_user_id = db.Column(db.Integer,
+                            autoincrement=True,
+                            primary_key=True,
+                            )
 
-#     def __repr__(self):
-#         """Provides useful represenation when printed"""
+    cal_id = db.Column(db.Integer,
+                       db.ForeignKey("calendars.cal_id"),
+                       nullable=False,
+                       )
 
-#         return """<Permission permission_level: {} >""".format(self.permission_level)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey("users.user_id"),
+                        nullable=False,)
 
+    permissions = db.Column(db.Integer,
+                            db.ForeignKey("permissions.permission_id"),
+                            nullable=False,
+                            )
 
-# class Event(db.Model):
-#     """This is the individual event"""
-
-#     __tablename__ = "events"
-
-#     event_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     start = db.Column(db.DateTime, default=datetime.utcnow)
-#     end = db.Column(db.DateTime, default=datetime.utcnow)
-#     title = db.Column(db.String(100), nullable=False)
-#     description = db.Column(db.String(100), nullable=False)
-#     location = db.Column(db.String(100), nullable=False)
-#     calendar_id = db.Column(db.Integer,
-#                             db.ForeignKey("calendars.calendar_id"),
-#                             nullable=False)
-#     location_time_zone = db.Column(db.String(100), nullable=False)
-
-#     def __repr__(self):
-#         """Provides useful represenation when printed"""
-
-#         return """<Event title: {} >""".format(self.title)
+    user = db.relationship("User",
+                           backref="calendar_users",
+                          )
+    calendar = db.relationship("Calendar",
+                               backref="calendar_users",
+                              )
 
 
-# class Calendar_Event(db.Model):
-#     """This is an individual relationship between Calendars & Events"""
+    def __repr__(self):
+        """Provides useful represenation when printed"""
 
-#     __tablename__ = "calendar_events"
+        return """<Calendar_User cal_id: {} user_id: {}>""".format(self.cal_id,
+                                                                   self, user_id
+                                                                   )
 
-#     calendar_event_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     calendar_owner = db.Column(db.Integer,
-#                             db.ForeignKey("calendars.calendar_id"),
-#                             nullable=False)
-#     event_id = db.Column(db.Integer,
-#                             db.ForeignKey("events.event_id"),
-#                             nullable=False)
-#     permissions = db.Column(db.Integer,
-#                             db.ForeignKey("permissions.permission_id"),
-#                             nullable=False)
 
-#     def __repr__(self):
-#         """Provides useful represenation when printed"""
+class Permission(db.Model):
+    """This is an individual permission level"""
 
-#         return """<Calendar_Event event_title: {} >""".format(self.calendar_owner)
+    __tablename__ = "permissions"
+
+    permission_id = db.Column(db.Integer,
+                              autoincrement=True,
+                              primary_key=True,
+                              )
+
+    permission_code = db.Column(db.String(20),
+                                 nullable=True,
+                                 )
+
+    def __repr__(self):
+        """Provides useful represenation when printed"""
+
+        return """<Permission permission_code: {}>""".format(self.permission_code)
+
+
+class Event(db.Model):
+    """This is the individual event"""
+
+    __tablename__ = "events"
+
+    event_id = db.Column(db.Integer,
+                         autoincrement=True,
+                         primary_key=True,
+                         )
+    start = db.Column(db.DateTime,
+                      default=datetime.utcnow,
+                      )
+    end = db.Column(db.DateTime,
+                    default=datetime.utcnow,
+                    )
+    title = db.Column(db.String(100),
+                      nullable=False,
+                      )
+    description = db.Column(db.String(500),
+                            nullable=False,
+                            )
+    location = db.Column(db.String(250),
+                         nullable=False,
+                         )
+    cal_id = db.Column(db.Integer,
+                       db.ForeignKey("calendars.cal_id"),
+                       nullable=False,
+                       )
+    location_time_zone = db.Column(db.String(100),
+                                   nullable=False)
+
+    def __repr__(self):
+        """Provides useful represenation when printed"""
+
+        return """<Event: id: {}, title: {}>""".format(self.id,
+                                                       self.title)
+
+
+class Calendar_Event(db.Model):
+    """This is an individual relationship between Calendars & Events"""
+
+    __tablename__ = "calendar_events"
+
+    cal_event_id = db.Column(db.Integer,
+                             autoincrement=True,
+                             primary_key=True,
+                             )
+    cal_id = db.Column(db.Integer,
+                       db.ForeignKey("calendars.cal_id"),
+                       nullable=False,
+                      )
+    event_id = db.Column(db.Integer,
+                            db.ForeignKey("events.event_id"),
+                            nullable=False,
+                            )
+    permissions = db.Column(db.Integer,
+                            db.ForeignKey("permissions.permission_id"),
+                            nullable=False)
+
+    event = db.relationship("Event", backref="calendar_events")
+    calendar = db.relationship("Calendar", backref="calendar_events")
+
+    def __repr__(self):
+        """Provides useful represenation when printed"""
+
+        return """<Calendar_Event event_title: {} >""".format(self.event_id)
 
 # ##########################################################################
 # # Helper Functions
@@ -214,22 +263,22 @@ class User(db.Model):
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "postgresql:///ridemindertest")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "postgresql:///jkcalendar")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     db.app = app
     db.init_app(app)
 
 
-if __name__ == "__main__":
-    """will connect to the db"""
-    import os
-    os.system("dropdb jkcalendar")
-    print "Dropped DB"
-    os.system("createdb jkcalendar")
-    print "created DB"
-    # db.create_all()
-
-    from server import app
-    connect_to_db(app)
-    db.create_all()
-    print "Connected to DB."
+# if __name__ == "__main__":
+#     """will connect to the db"""
+#     import os
+#     os.system("dropdb jkcalendar")
+#     print "Dropped DB"
+#     os.system("createdb jkcalendar")
+#     print "created DB"
+#     # db.create_all()
+#
+#     from server import app
+#     connect_to_db(app)
+#     db.create_all()
+#     print "Connected to DB."
