@@ -7,7 +7,7 @@ from server import app
 db = SQLAlchemy()
 
 class Permission(db.Model):
-    """This is an individual permission level"""
+    """An individual permission level"""
 
     __tablename__ = "permissions"
 
@@ -28,7 +28,7 @@ class Permission(db.Model):
 
 
 class User(db.Model):
-    """This is an individual user"""
+    """An individual user"""
 
     __tablename__ = "users"
 
@@ -48,7 +48,7 @@ class User(db.Model):
 
 
 class Calendar(db.Model):
-    """This is the individual calendar"""
+    """An individual calendar"""
 
     __tablename__ = "calendars"
 
@@ -67,7 +67,7 @@ class Calendar(db.Model):
 
 
 class Calendar_User(db.Model):
-    """This is the individual relationship between a User & Calendar"""
+    """The individual relationship between a User & Calendar"""
 
     __tablename__ = "calendar_users"
 
@@ -108,7 +108,7 @@ class Calendar_User(db.Model):
 
 
 class Event(db.Model):
-    """This is the individual event"""
+    """An individual event"""
 
     __tablename__ = "events"
 
@@ -116,6 +116,11 @@ class Event(db.Model):
                          autoincrement=True,
                          primary_key=True,
                          )
+
+    cal_id = db.Column(db.Integer,
+                        db.ForeignKey("calendars.cal_id"),
+                        nullable=False,
+                        )
     start = db.Column(db.DateTime,
                       default=datetime.utcnow,
                       )
@@ -126,17 +131,17 @@ class Event(db.Model):
                       nullable=False,
                       )
     description = db.Column(db.String(500),
-                            nullable=False,
+                            nullable=True,
                             )
     location = db.Column(db.String(250),
-                         nullable=False,
+                         nullable=True,
                          )
-    cal_id = db.Column(db.Integer,
-                       db.ForeignKey("calendars.cal_id"),
-                       nullable=False,
-                       )
+
     location_time_zone = db.Column(db.String(100),
-                                   nullable=False)
+                                   nullable=True)
+
+    invites = db.relationship("Event_Invite", backref="event")
+
 
     def __repr__(self):
         """Provides useful represenation when printed"""
@@ -145,123 +150,59 @@ class Event(db.Model):
                                                        self.title)
 
 
-class Calendar_Event(db.Model):
-    """This is an individual relationship between Calendars & Events"""
+class Status(db.Model):
+    """An individual status"""
 
-    __tablename__ = "calendar_events"
+    __tablename__ = "status"
 
-    cal_event_id = db.Column(db.Integer,
-                             autoincrement=True,
-                             primary_key=True,
-                             )
-    cal_id = db.Column(db.Integer,
-                       db.ForeignKey("calendars.cal_id"),
-                       nullable=False,
-                      )
-    event_id = db.Column(db.Integer,
-                            db.ForeignKey("events.event_id"),
-                            nullable=False,
-                            )
-    permissions = db.Column(db.Integer,
-                            db.ForeignKey("permissions.permission_id"),
-                            nullable=False)
-
-    event = db.relationship("Event", backref="calendar_events")
-    calendar = db.relationship("Calendar", backref="calendar_events")
+    status_id = db.Column(db.Integer,
+                          autoincrement=True,
+                          primary_key=True,
+                          )
+    status = db.Column(db.String(25),
+                        unique=True,
+                        nullable=False,
+                        )
 
     def __repr__(self):
         """Provides useful represenation when printed"""
 
-        return """<Calendar_Event event_title: {} >""".format(self.event_id)
+        return """<Status: status_id: {}, status: {}>""".format(self.status_id,
+                                                                self.status)
 
-# ##########################################################################
-# # Helper Functions
+class Event_Invite(db.Model):
+    """An individual invite"""
 
+    __tablename__ = "invites"
 
-# def checks_user_db(user_name, user_phone):
-#     """checks the db if the user is in the db and returns user object"""
-
-#     user = User.query.filter_by(user_phone=user_phone).first()
-
-#     if user:
-#         return user
-
-#     new_user = User(user_name=user_name, user_phone=user_phone)
-#     db.session.add(new_user)
-#     db.session.commit()
-
-#     return User.query.filter_by(user_phone=user_phone).first()
-
-
-# def adds_transit_request(user_inital_stop, destination_stop, agency, route,
-#     route_code, arrival_time_datetime, user_db):
-#     """adds a transit request to the database"""
-
-#     now = datetime.utcnow()
-#     new_transit_request = Transit_Request(inital_stop_code=user_inital_stop,
-#                 destination_stop_code=destination_stop, agency=agency, route=route,
-#                 route_code=route_code, arrival_time=arrival_time_datetime,
-#                 start_time_stamp=now, current_stop=user_inital_stop,
-#                 user_id=user_db.user_id)
-
-#     db.session.add(new_transit_request)
-#     db.session.commit()
+    invite_id = db.Column(db.Integer,
+                   autoincrement=True,
+                   primary_key=True,
+                  )
+    event_id = db.Column(db.Integer,
+                         db.ForeignKey("events.event_id"),
+                         nullable=False,
+                        )
+    status_id = db.Column(db.Integer,
+                          db.ForeignKey("status.status_id"),
+                          nullable=True,
+                          default=1
+                          )
+    # id of invitee.
+    cal_id = db.Column(db.Integer,
+                       db.ForeignKey("calendars.cal_id"),
+                       nullable=False,
+                            )
+    time_created = db.Column(db.DateTime(timezone=True),
+                                   server_default=db.func.now(),
+                                   )
+    time_deleted = db.Column(db.DateTime(timezone=True),
+                                   onupdate=db.func.now(),
+                                  )
 
 
-# def list_of_is_finished_to_process():
-#     """Gets all the transit_request that need to be processed (ie. is_finished = False)"""
 
-#     request_to_process = Transit_Request.query.filter(Transit_Request.is_finished == False).all()
-
-#     return request_to_process
-
-
-# def gets_agency_db(name):
-#     """returns the db object of an agency"""
-
-#     return Agency.query.filter_by(name=name).first()
-
-
-# def gets_route_db(route_code, direction=False):
-#     """returns the db object of a route"""
-
-#     if direction is False:
-#         return Route.query.filter_by(route_code=route_code).first()
-
-#     return Route.query.filter_by(route_code=route_code, direction=direction).first()
-
-
-# def gets_route_id_db(route_id):
-#     """returns the db object of a route"""
-
-#     return Route.query.filter_by(route_id=route_id).first()
-
-
-# def gets_stop_db(stop_id):
-#     """returns the db object of a stop"""
-
-#     return Stop.query.filter_by(stop_code=stop_id).first()
-
-
-# def gets_stop_name_db(stop_name):
-#     """returns the db object of a stop"""
-
-#     return Stop.query.filter_by(name=stop_name).all()
-
-
-# def update_request(request):
-#     """Updates the request's information into the db"""
-
-#     db.session.commit()
-
-
-# def records_request_complete_db(request, now):
-#     """Changes the transit_request is_finished to True (request is complete)"""
-
-#     request.end_time_stamp = now
-#     request.is_finished = True
-#     update_request(request)
-
+################################################################################
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
