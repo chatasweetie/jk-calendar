@@ -1,8 +1,6 @@
 """Class for database for JK Calendar"""
-import os
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from server import app
 
 db = SQLAlchemy()
 
@@ -207,7 +205,7 @@ class Event_Invite(db.Model):
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "postgresql:///jkcalendar")
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///jkcalendar"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     db.app = app
     db.init_app(app)

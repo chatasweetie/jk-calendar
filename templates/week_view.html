@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="container">
+        <div id="week-title">
+            <h2 class="text-center">{{ week_title }}</h2>
+        </div>
+        <div class="row">
+            <div id="hours" class="col">
+            </div>
+            {{ times.strftime('%Y-%m-%d') }}
+            <div id="monday" class="col">
+                <p>
+                    Monday
+                </p>
+            </div>
+            <div id="tuesday" class="col">
+                <p>
+                    Tuesday
+                </p>
+            </div>
+            <div id="wednesday" class="col">
+                <p>
+                    Wednesday
+                </p>
+            </div>
+            <div id="thursday" class="col">
+                <p>
+                    Thursday
+                </p>
+            </div>
+            <div id="friday" class="col">
+                <p>
+                    Friday
+                </p>
+            </div>
+            <div id="saturday" class="col">
+                <p>
+                    Saturday
+                </p>
+            </div>
+            <div id="sunday" class="col">
+                <p>
+                    Sunday
+                </p>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+  
+
+{% endblock %}

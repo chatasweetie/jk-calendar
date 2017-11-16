@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+    <head>
+      <title>JKCal</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    {% block head %}  {% endblock %}
+    </head>
+
+<body>
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded sticky-top">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="/">
+    <img src="static/imgs/jkcalendar.png" alt="JK Calendar logo" class="nav-logo">
+  </a>
+  <div class="collapse navbar-collapse" id="navbarNav">
+  </div>
+</nav>
+
+  {% block content %}  {% endblock %}
+
+  <!-- Footer -->
+  <div class="container-fluid footer center footer-padding center-block">
+    <div class="row justify-content-md-center">
+      <div class="col-md-3 center-text">
+        <p>
+          Thank you.
+        </p>
+      </div>
+  </div>
+
+</body>
+</html>
