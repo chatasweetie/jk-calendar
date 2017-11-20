@@ -1,7 +1,7 @@
 """Class for database for JK Calendar"""
 import os
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 from server import app
 
 db = SQLAlchemy()
@@ -65,6 +65,77 @@ class Calendar(db.Model):
 
         return """<Calendar name: {}>""".format(self.name)
 
+    def get_week(self, date):
+        """Returns events for the week the date argument belongs to
+
+
+        """
+        week = self._calculate_week(date)
+
+        monday, sunday = self._stringify_dates(week)
+
+        base_query = Event.query
+        events = base_query.filter(Event.cal_id==self.cal_id,
+                                   db.or_(Event.start.between(monday, sunday),
+                                   Event.end.between(monday, sunday))).all()
+
+        return events
+        # CURRENTLY - we just want information for an individual calendar,
+        # so filter on the cal_id.
+        # FUTURE - may want to do this as a class method === get all envents
+        # between these date ranges, not just the ones for a particular id.
+        # Going by id requires that we then loop over all of the db to get the
+        # event range for each id.
+        # If we do this as a class method we will have all of the
+        # ids as part of the results and can use display logic to separate
+        # each of the users.
+
+    def get_month(self, year, month):
+        """Returns all user calendar events for a specific month
+
+        """
+
+        base_query = Event.query
+        events = base_query.filter(Event.cal_id == self.cal_id,
+                                   db.extract("year", Event.start) == year,
+                                   db.extract("month", Event.start) == month,
+                                   ).all()
+
+        return events
+
+
+    def _stringify_dates(self, dates_tuple):
+        """Returns tuple of string for the datetime objects"""
+
+        return tuple(str(date) for date in dates_tuple)
+
+
+    def _calculate_week(self, date):
+        """Returns date range for the week the date belongs to
+
+        >>> mon = datetime.datetime(2017, 11, 13)
+        >>> _calculate_week(mon)
+        (datetime.datetime(2017, 11, 13, 12),
+        datetime.datetime(2017, 11, 19, 12))
+
+        >>> sun = datetime.datetime(2017, 11, 19, 12, 6)
+        >>> _calculate_week(sun)
+        (datetime.datetime(2017, 11, 13, 12, 6),
+        datetime.datetime(2017, 11, 19, 12, 6))
+
+        >>> thr = datetime.datetime(2017, 11, 16, 12, 6)
+        >>> _calculate_week(d)
+        (datetime.datetime(2017, 11, 13, 12, 6),
+        datetime.datetime(2017, 11, 19, 12, 6))
+
+        """
+        weekday = date.weekday()
+
+        monday = date - timedelta(weekday)
+        sunday = monday + timedelta(6)
+
+        return (monday, sunday)
+
 
 class Calendar_User(db.Model):
     """The individual relationship between a User & Calendar"""
@@ -122,10 +193,10 @@ class Event(db.Model):
                         nullable=False,
                         )
     start = db.Column(db.DateTime,
-                      default=datetime.utcnow,
+                      default=datetime.utcnow(),
                       )
     end = db.Column(db.DateTime,
-                    default=datetime.utcnow,
+                    default=datetime.utcnow(),
                     )
     title = db.Column(db.String(100),
                       nullable=False,
@@ -146,7 +217,7 @@ class Event(db.Model):
     def __repr__(self):
         """Provides useful represenation when printed"""
 
-        return """<Event: id: {}, title: {}>""".format(self.id,
+        return """<Event: id: {}, title: {}>""".format(self.event_id,
                                                        self.title)
 
 

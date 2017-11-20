@@ -1,5 +1,5 @@
 import model
-
+from datetime import datetime
 
 USERS = ["sally@gmail.com",
            "bill@gmail.com",
@@ -12,40 +12,40 @@ PERMISSIONS = ["view", "edit", "owner",]
 STATUSES = ["awaiting response", "accepted", "declined", "edited"]
 
 EVENTS = [{"title": "dinner",
-           "start": model.datetime(2017, 11, 14, 15, 30),
-           "end":  model.datetime(2017, 11, 14, 16, 30),
+           "start": datetime(2017, 11, 14, 15, 30),
+           "end":  datetime(2017, 11, 14, 16, 30),
             },
             {"title": "Birthday!",
-             "start": model.datetime(2017, 11, 20, 15, 30),
-             "end":  model.datetime(2017, 11, 20, 16, 30),
+             "start": datetime(2017, 11, 20, 15, 30),
+             "end":  datetime(2017, 11, 20, 16, 30),
             },
             {"title": "Shopping!",
-             "start": model.datetime(2017, 11, 24, 15, 30),
-             "end":  model.datetime(2017, 11, 24, 16, 30),
+             "start": datetime(2017, 11, 24, 15, 30),
+             "end":  datetime(2017, 11, 24, 16, 30),
             },
             {"title": "Buy Suit!",
-             "start": model.datetime(2017, 11, 30, 15, 30),
-             "end":  model.datetime(2017, 11, 30, 16, 30),
+             "start": datetime(2017, 12, 30, 15, 30),
+             "end":  datetime(2017, 12, 30, 16, 30),
             },
             {"title": "Walk River!",
-             "start": model.datetime(2017, 11, 16, 15, 30),
-             "end":  model.datetime(2017, 11, 16, 16, 30),
+             "start": datetime(2017, 11, 16, 15, 30),
+             "end":  datetime(2017, 11, 16, 16, 30),
             },
             {"title": "Jesus Birthday!",
-             "start": model.datetime(2017, 11, 25, 15, 30),
-             "end":  model.datetime(2017, 11, 25, 16, 30),
+             "start": datetime(2017, 12, 25, 15, 30),
+             "end":  datetime(2017, 12, 25, 16, 30),
             },
             {"title": "Code!",
-             "start": model.datetime(2018, 11, 20, 15, 30),
-             "end":  model.datetime(2017, 11, 20, 16, 30),
+             "start": datetime(2018, 11, 20, 15, 30),
+             "end":  datetime(2017, 11, 20, 16, 30),
             },
             {"title": "Holiday Party!",
-             "start": model.datetime(2017, 11, 27, 15, 30),
-             "end":  model.datetime(2017, 11, 27, 16, 30),
+             "start": datetime(2017, 11, 27, 15, 30),
+             "end":  datetime(2017, 11, 27, 16, 30),
             },
             {"title": "Icecream!",
-             "start": model.datetime(2017, 11, 23, 15, 30),
-             "end":  model.datetime(2017, 11, 23, 16, 30),
+             "start": datetime(2017, 11, 23, 15, 30),
+             "end":  datetime(2017, 11, 23, 16, 30),
             },
             ]
 
@@ -114,10 +114,14 @@ def create_status(s_list):
 
 def make_event(event, cal_id):
 
+    start_week = event["start"].isocalendar()[:2]
+    end_week = event["end"].isocalendar()[:2]
+
     return model.Event(cal_id=cal_id,
                         title=event["title"],
                         start=event["start"],
-                        end=event["end"])
+                        end=event["end"],
+                        )
 
 def create_events(e_list):
     """Creates and commits events
