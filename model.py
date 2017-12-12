@@ -1,7 +1,6 @@
 """Class for database for JK Calendar"""
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
-from server import app
 
 db = SQLAlchemy()
 
